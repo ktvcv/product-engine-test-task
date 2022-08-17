@@ -15,7 +15,7 @@ one [endpoint](https://github.com/ktvcv/product-engine-test-task/blob/master/src
 , which gets all routers' messages, stores it and from time to time(60 seconds in test case, anyway, you can change it
 in
 a [properties file](https://github.com/ktvcv/product-engine-test-task/blob/master/src/main/resources/application.properties)
-, so like other params)check them for possible problem, and if a problem is found, invoke some method. For messages
+, so like other params)checks them for possible problem, and if a problem is found, invoke save method. For messages
 analysis used two
 classes([for lost problem](https://github.com/ktvcv/product-engine-test-task/blob/master/src/main/java/com/productengine/productenginetesttask/service/problemanalyzer/LostRouterAnalyzer.java)
 and [flapped problem](https://github.com/ktvcv/product-engine-test-task/blob/master/src/main/java/com/productengine/productenginetesttask/service/problemanalyzer/FlapperRouterAnalyzer.java))
