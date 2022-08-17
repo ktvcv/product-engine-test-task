@@ -22,7 +22,7 @@ public class Config {
 
     @Bean
     public Long doubleInterval(){
-        return fixedRate;
+        return fixedRate * 2;
     }
 
     @Bean

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +42,7 @@ public final class RouterMessageService {
         log.info(format("Received a router message %s", routerMessage));
 
         if (!isMessageDelayed(routerMessage)) {
-            upcomingMessages.computeIfAbsent(routerMessage.getIp(), ip -> new TreeSet<>()).add(routerMessage);
+            upcomingMessages.computeIfAbsent(routerMessage.getIp(), ip -> new HashSet<>()).add(routerMessage);
         }
     }
 
@@ -54,7 +55,7 @@ public final class RouterMessageService {
 
     @Scheduled(
         fixedRateString = "#{checkInterval}",
-        initialDelayString = "#{doubleInterval}",
+        initialDelayString = "#{checkInterval}",
         timeUnit = TimeUnit.SECONDS
     )
     private void findRoutersProblems() {

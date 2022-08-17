@@ -18,14 +18,14 @@ public class RouterMessageDTO implements Comparable<RouterMessageDTO>{
 
     @Override
     public int compareTo(final RouterMessageDTO routerMessageDTO) {
-        return this.receivedAt.compareTo(routerMessageDTO.getReceivedAt());
+        return this.createdAt.compareTo(routerMessageDTO.getCreatedAt());
     }
 
     public boolean isAvailable(){
         return status.isSuccessStatus();
     }
 
-    public  boolean isOpposite(final MessageStatus messageStatus){
+    public  boolean hasOppositeStatus(final MessageStatus messageStatus){
         return this.status != messageStatus;
     }
 

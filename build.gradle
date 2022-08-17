@@ -25,7 +25,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    implementation platform ('org.springframework.cloud:spring-cloud-openfeign-dependencies:3.0.5')
+    implementation platform('org.springframework.cloud:spring-cloud-openfeign-dependencies:3.0.5')
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'io.github.openfeign:feign-okhttp'
 
@@ -36,7 +36,7 @@ dependencies {
 test{
     useJUnitPlatform()
     testLogging {
-        events "failed"
+        events "failed", "passed"
         exceptionFormat "full"
     }
 }

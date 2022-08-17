@@ -15,8 +15,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 import static com.productengine.productenginetesttask.model.enums.RouterProblem.FLAPPED;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Component
@@ -52,17 +51,13 @@ public class FlapperRouterAnalyzer implements RouterProblemAnalyzer {
     }
 
     private boolean checkPair(final Set<RouterMessageDTO> messages, final LocalDateTime now) {
-        final Map<Boolean, List<RouterMessageDTO>> messagesByAvailable = messages
+        final List<RouterMessageDTO> goneMessages = messages
             .stream()
-            .filter(message -> isNotProcessedMessages(message, now))
-            .collect(groupingBy(RouterMessageDTO::isAvailable));
-
-        final List<RouterMessageDTO> goneMessages = messagesByAvailable
-            .getOrDefault(false, emptyList());
+            .filter(message -> isNotProcessedMessages(message, now) && !message.isAvailable())
+            .collect(toList());
 
         return goneMessages
-            .stream()
-            .sorted()
+            .parallelStream()
             .map(goneMessage -> checkForFlappedMessages(goneMessage, messages))
             .anyMatch(flappedMessages -> flappedMessages.equals(flapperMessagesCount));
     }
@@ -71,7 +66,6 @@ public class FlapperRouterAnalyzer implements RouterProblemAnalyzer {
         final RouterMessageDTO goneMessage, final Set<RouterMessageDTO> messages
     ) {
         final LocalDateTime maxDelayMessageTime = goneMessage.getCreatedAt().plusSeconds(flappedIntervalInSeconds);
-
         final TreeMap<LocalDateTime, RouterMessageDTO> map = messages
             .stream()
             .collect(
@@ -102,7 +96,7 @@ public class FlapperRouterAnalyzer implements RouterProblemAnalyzer {
         if (next.isPresent()) {
             final RouterMessageDTO nextMessage = next.get().getValue();
             if (nextMessage.getCreatedAt().isBefore(maxDelayMessageTime)
-                && previous.isOpposite(nextMessage.getStatus())
+                && previous.hasOppositeStatus(nextMessage.getStatus())
             ) {
                 return Optional.of(nextMessage);
             }

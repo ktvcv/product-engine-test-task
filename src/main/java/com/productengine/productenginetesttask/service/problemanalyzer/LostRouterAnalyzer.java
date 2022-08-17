@@ -37,7 +37,7 @@ public class LostRouterAnalyzer implements RouterProblemAnalyzer {
     ) {
         messagesByRouter
             .entrySet()
-            .stream()
+            .parallelStream()
             .filter(routerMessage -> isFailed(routerMessage.getValue(), now))
             .forEach(entry -> routerProblemSaverService.saveProblemRouters(entry.getKey(), getProblemType()));
     }
