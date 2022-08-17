@@ -1,5 +1,7 @@
 package com.productengine.productenginetesttask.model.enums;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public enum MessageStatus {
 
     GONE(false), AVAILABLE(true);
@@ -14,8 +16,9 @@ public enum MessageStatus {
         return isSuccessStatus;
     }
 
-    public static MessageStatus getRandom(final int randomNumber) {
-        if (randomNumber % 3 == 0){
+    public static MessageStatus getRandom() {
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
+        if (random.nextInt(100) % 3 == 0) {
             return GONE;
         }
         return AVAILABLE;

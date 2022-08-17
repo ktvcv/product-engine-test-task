@@ -8,14 +8,25 @@ import java.time.LocalDateTime;
 
 @Data
 @Accessors(chain = true)
-public final class RouterMessageDTO implements Comparable<RouterMessageDTO>{
+public class RouterMessageDTO implements Comparable<RouterMessageDTO>{
 
     private String ip;
     private MessageStatus status;
-    private LocalDateTime timeStamp;
+    private LocalDateTime createdAt;
+
+    private LocalDateTime receivedAt;
 
     @Override
     public int compareTo(final RouterMessageDTO routerMessageDTO) {
-        return this.timeStamp.compareTo(routerMessageDTO.timeStamp);
+        return this.receivedAt.compareTo(routerMessageDTO.getReceivedAt());
     }
+
+    public boolean isAvailable(){
+        return status.isSuccessStatus();
+    }
+
+    public  boolean isOpposite(final MessageStatus messageStatus){
+        return this.status != messageStatus;
+    }
+
 }
