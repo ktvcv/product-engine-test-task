@@ -11,7 +11,6 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static com.productengine.productenginetesttask.model.enums.MessageStatus.AVAILABLE;
@@ -35,7 +34,7 @@ public class MockRouterSenderMessage implements RouterSenderMessage {
         //lost problem
         lostRouterMessages.add(
             new MockRouterMessage()
-                .setDelayInSeconds(3)
+                .setDelayInSeconds(4)
                 .setRouterMessageDTO(new RouterMessageDTO()
                     .setIp(FIRST_IP)
                     .setCreatedAt(START.plusSeconds(3))
@@ -43,14 +42,14 @@ public class MockRouterSenderMessage implements RouterSenderMessage {
         // received with delay, ignored
         lostRouterMessages.add(
             new MockRouterMessage()
-                .setDelayInSeconds(35)
+                .setDelayInSeconds(40)
                 .setRouterMessageDTO(new RouterMessageDTO()
                     .setIp(FIRST_IP)
                     .setCreatedAt(START.plusSeconds(5))
                     .setStatus(AVAILABLE)));
         lostRouterMessages.add(
             new MockRouterMessage()
-                .setDelayInSeconds(20)
+                .setDelayInSeconds(80)
                 .setRouterMessageDTO(new RouterMessageDTO()
                     .setIp(FIRST_IP)
                     .setCreatedAt(START.plusSeconds(70))
@@ -60,36 +59,42 @@ public class MockRouterSenderMessage implements RouterSenderMessage {
         //flapped
         flappedRouterMessage.add(
             new MockRouterMessage()
+                .setDelayInSeconds(7)
                 .setRouterMessageDTO(new RouterMessageDTO()
                     .setIp(SECOND_IP)
                     .setCreatedAt(START.plusSeconds(5))
                     .setStatus(GONE)));
         flappedRouterMessage.add(
             new MockRouterMessage()
+                .setDelayInSeconds(13)
                 .setRouterMessageDTO(new RouterMessageDTO()
                     .setIp(SECOND_IP)
                     .setCreatedAt(START.plusSeconds(10))
                     .setStatus(AVAILABLE)));
         flappedRouterMessage.add(
             new MockRouterMessage()
+                .setDelayInSeconds(17)
                 .setRouterMessageDTO(new RouterMessageDTO()
                     .setIp(SECOND_IP)
                     .setCreatedAt(START.plusSeconds(15))
                     .setStatus(GONE)));
         flappedRouterMessage.add(
             new MockRouterMessage()
+                .setDelayInSeconds(22)
                 .setRouterMessageDTO(new RouterMessageDTO()
                     .setIp(SECOND_IP)
                     .setCreatedAt(START.plusSeconds(20))
                     .setStatus(AVAILABLE)));
         flappedRouterMessage.add(
             new MockRouterMessage()
+                .setDelayInSeconds(27)
                 .setRouterMessageDTO(new RouterMessageDTO()
                     .setIp(SECOND_IP)
                     .setCreatedAt(START.plusSeconds(25))
                     .setStatus(GONE)));
         flappedRouterMessage.add(
             new MockRouterMessage()
+                .setDelayInSeconds(32)
                 .setRouterMessageDTO(new RouterMessageDTO()
                     .setIp(SECOND_IP)
                     .setCreatedAt(START.plusSeconds(30))
@@ -103,30 +108,24 @@ public class MockRouterSenderMessage implements RouterSenderMessage {
     @SneakyThrows
     @Override
     public void sendMessage() {
-        flappedMessages();
-        lostMessages();
+        sendMessages();
 
         //to wait for messages analyze
-        TimeUnit.SECONDS.sleep(100);
+        TimeUnit.SECONDS.sleep(120);
     }
 
-    private void lostMessages() {
-        CompletableFuture.runAsync(
-            () -> lostRouterMessages.forEach(mockMessage -> {
+    private void sendMessages() {
+        lostRouterMessages.addAll(flappedRouterMessage);
+        lostRouterMessages.forEach(mockMessage -> new Thread(() ->
+            {
                 try {
                     TimeUnit.SECONDS.sleep(mockMessage.getDelayInSeconds());
                     routerMessageService.saveRouterMessage(mockMessage.getRouterMessageDTO());
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                    e.printStackTrace();
                 }
-            })
+            }).start()
         );
     }
 
-    private void flappedMessages() {
-        CompletableFuture.runAsync(
-            () -> flappedRouterMessage.forEach(
-                mockMessage -> routerMessageService.saveRouterMessage(mockMessage.getRouterMessageDTO()))
-        );
-    }
 }

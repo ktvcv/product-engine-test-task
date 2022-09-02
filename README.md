@@ -27,12 +27,6 @@ and a
 how the app will work in 'real' situations when two scenarios are possible. For this task, the clearing of processed
 data was not implemented.
 
-### Choice of task
-
-I have chosen this task because it seemed to be more
-'real-life' and 'business' task to me. Also, writing a test for this task is quite useful, so I can create a test first,
-mock a data and always check logic and correctness of my app, change parameters etc.
-
 
 
 

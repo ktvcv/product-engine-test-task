@@ -28,9 +28,6 @@ class ProductEngineTestTaskApplicationTests {
         routerSenderMessage.sendMessage();
 
         verify(saverService, times(1))
-            .saveProblemRouters("1.1.1.1", RouterProblem.LOST);
-        verify(saverService, times(1))
             .saveProblemRouters("2.2.2.2", RouterProblem.FLAPPED);
     }
-
 }

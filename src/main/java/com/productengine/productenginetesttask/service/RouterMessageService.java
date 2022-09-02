@@ -49,7 +49,7 @@ public final class RouterMessageService {
         final RouterMessageDTO routerMessage
     ) {
         return ChronoUnit.SECONDS
-            .between(routerMessage.getCreatedAt(), routerMessage.getReceivedAt()) > maxRouterMessageDelay;
+            .between(routerMessage.getReceivedAt(), routerMessage.getCreatedAt()) > maxRouterMessageDelay;
     }
 
     @Scheduled(
